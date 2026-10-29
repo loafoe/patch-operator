@@ -51,6 +51,7 @@ func NewPatchInjector(client client.Client, restConfig *rest.Config, customResou
 	return &PatchInjector{
 		client:     client,
 		restConfig: restConfig,
+		decoder:    admission.NewDecoder(client.Scheme()),
 		crr:        customResourceDefinitionReconciler,
 	}
 }
@@ -179,12 +180,6 @@ func (a *PatchInjector) getPatchMeta(context context.Context, obj *unstructured.
 	log.V(1).Info("getPatchMeta", "getModelName(resource)", getModelName(resource))
 	openapiSchema := openapiModels.LookupModel(getModelName(resource))
 	return strategicpatch.NewPatchMetaFromOpenAPI(openapiSchema), nil
-}
-
-// InjectDecoder injects the decoder.
-func (a *PatchInjector) InjectDecoder(d *admission.Decoder) error {
-	a.decoder = d
-	return nil
 }
 
 func (a *PatchInjector) advancedTemplateFuncMapWithImpersonation(ctx context.Context, userInfo *v1authn.UserInfo) template.FuncMap {
