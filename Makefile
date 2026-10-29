@@ -2,8 +2,8 @@ CHART_REPO_URL ?= http://example.com
 HELM_REPO_DEST ?= /tmp/gh-pages
 OPERATOR_NAME ?=$(shell basename -z `pwd`)
 HELM_VERSION ?= v3.8.0
-KIND_VERSION ?= v0.11.1
-KUBECTL_VERSION ?= v1.21.1
+KIND_VERSION ?= v0.33.0
+KUBECTL_VERSION ?= v1.34.11
 VAULT_VERSION ?= 1.9.3
 
 # VERSION defines the project version for the bundle.
