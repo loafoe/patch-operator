@@ -22,6 +22,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -o manager main.go
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 WORKDIR /
 COPY --from=builder /workspace/manager .
+RUN microdnf -y update && microdnf clean all
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

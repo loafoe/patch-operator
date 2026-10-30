@@ -32,7 +32,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 func NewCustomResourceDefinitionReconciler(restConfig *rest.Config) *CustomResourceDefinitionReconciler {
@@ -121,7 +120,7 @@ func (r *CustomResourceDefinitionReconciler) SetupWithManager(mgr ctrl.Manager) 
 		For(&apiextension.CustomResourceDefinition{}, builder.WithPredicates(predicate.NewPredicateFuncs(func(object client.Object) bool {
 			return false
 		}))).
-		Watches(&source.Kind{Type: &apiextension.CustomResourceDefinition{}}, handler.EnqueueRequestsFromMapFunc(func(o client.Object) []reconcile.Request {
+		Watches(&apiextension.CustomResourceDefinition{}, handler.EnqueueRequestsFromMapFunc(func(ctx context.Context, o client.Object) []reconcile.Request {
 			return []reconcile.Request{{
 				NamespacedName: types.NamespacedName{
 					Namespace: "alwaysthesame",

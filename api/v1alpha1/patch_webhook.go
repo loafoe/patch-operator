@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // log is for logging in this package.
@@ -56,27 +57,27 @@ func (r *Patch) Default() {
 var _ webhook.Validator = &Patch{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Patch) ValidateCreate() error {
+func (r *Patch) ValidateCreate() (admission.Warnings, error) {
 	patchlog.Info("validate create", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	return nil, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Patch) ValidateUpdate(old runtime.Object) error {
+func (r *Patch) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	patchlog.Info("validate update", "name", r.Name)
 
 	if !reflect.DeepEqual(r.Spec.ServiceAccountRef, old.(*Patch).Spec.ServiceAccountRef) {
-		return errors.New(".spec.serviceAccountRef is immutable after creation")
+		return nil, errors.New(".spec.serviceAccountRef is immutable after creation")
 	}
-	return nil
+	return nil, nil
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Patch) ValidateDelete() error {
+func (r *Patch) ValidateDelete() (admission.Warnings, error) {
 	patchlog.Info("validate delete", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object deletion.
-	return nil
+	return nil, nil
 }
