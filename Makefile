@@ -2,8 +2,8 @@ CHART_REPO_URL ?= http://example.com
 HELM_REPO_DEST ?= /tmp/gh-pages
 OPERATOR_NAME ?=$(shell basename -z `pwd`)
 HELM_VERSION ?= v3.8.0
-KIND_VERSION ?= v0.11.1
-KUBECTL_VERSION ?= v1.21.1
+KIND_VERSION ?= v0.33.0
+KUBECTL_VERSION ?= v1.34.11
 VAULT_VERSION ?= 1.9.3
 
 # VERSION defines the project version for the bundle.
@@ -174,7 +174,7 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 KUSTOMIZE_VERSION ?= v3.8.7
-CONTROLLER_TOOLS_VERSION ?= v0.9.0
+CONTROLLER_TOOLS_VERSION ?= v0.23.0
 
 
 .PHONY: controller-gen
@@ -298,7 +298,11 @@ helmchart-test: kind-setup helmchart
 	  --set image.repository=${HELM_TEST_IMG_NAME} \
 	  --set image.tag=${HELM_TEST_IMG_TAG}
 	$(KUBECTL) wait --namespace ${OPERATOR_NAME}-local --for=condition=ready pod --selector=app.kubernetes.io/name=${OPERATOR_NAME} --timeout=90s
-	$(KUBECTL) wait --namespace default --for=condition=ready pod prometheus-kube-prometheus-stack-prometheus-0 --timeout=180s
+	$(KUBECTL) wait --namespace default --for=condition=ready pod prometheus-kube-prometheus-stack-prometheus-0 --timeout=600s || { \
+	  $(KUBECTL) get pods -A; \
+	  $(KUBECTL) describe pod prometheus-kube-prometheus-stack-prometheus-0 -n default; \
+	  $(KUBECTL) logs prometheus-kube-prometheus-stack-prometheus-0 -n default -c test-metrics --tail=30; \
+	  exit 1; }
 	$(KUBECTL) exec prometheus-kube-prometheus-stack-prometheus-0 -n default -c test-metrics -- /bin/sh -c "echo 'Example metrics...' && cat /tmp/ready"
 
 .PHONY: kind
