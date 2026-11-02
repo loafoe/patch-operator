@@ -143,12 +143,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Install Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: '4.2.0'
+
       - name: Build Helm chart
         # make helmchart renders config/helmchart (kustomize + Chart.yaml.tpl/values.yaml.tpl)
         # into ./charts/patch-operator. Its `helm` Makefile target only downloads to ./bin/helm
-        # when no system `helm` is on PATH - ubuntu-24.04 runners ship one at /usr/local/bin/helm,
-        # so Make reuses that instead and ./bin/helm is never created. Use plain `helm` (PATH)
-        # below rather than assuming ./bin/helm exists.
+        # when no system `helm` is on PATH; with the pinned version installed above and on PATH,
+        # Make reuses that instead and ./bin/helm is never created - use plain `helm` (PATH) below
+        # rather than assuming ./bin/helm exists.
         run: |
           make helmchart VERSION=${{ github.ref_name }} IMG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
