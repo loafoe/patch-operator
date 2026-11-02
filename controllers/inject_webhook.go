@@ -43,7 +43,7 @@ var createTimePatchLog = logf.Log.WithName("create-time-patch-webhook")
 type PatchInjector struct {
 	client     client.Client
 	restConfig *rest.Config
-	decoder    *admission.Decoder
+	decoder    admission.Decoder
 	crr        *CustomResourceDefinitionReconciler
 }
 
