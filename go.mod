@@ -4,9 +4,9 @@ go 1.27.3
 
 require (
 	github.com/evanphx/json-patch v5.7.0+incompatible
+	github.com/gjkamstra/operator-utils/v2 v2.0.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.40.0
-	github.com/redhat-cop/operator-utils v1.3.9-controller-runtime-0.25
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.1
 	k8s.io/apimachinery v0.37.1
@@ -102,5 +102,3 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 )
-
-replace github.com/redhat-cop/operator-utils => github.com/gjkamstra/operator-utils v1.3.9-controller-runtime-0.25

@@ -33,7 +33,7 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/lockedresourcecontroller"
 	redhatcopv1alpha1 "github.com/redhat-cop/patch-operator/api/v1alpha1"
 	"github.com/redhat-cop/patch-operator/controllers"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
