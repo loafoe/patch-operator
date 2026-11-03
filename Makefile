@@ -3,6 +3,7 @@ HELM_REPO_DEST ?= /tmp/gh-pages
 OPERATOR_NAME ?=$(shell basename -z `pwd`)
 HELM_VERSION ?= v3.8.0
 KIND_VERSION ?= v0.33.0
+KO_VERSION ?= v0.19.1
 KUBECTL_VERSION ?= v1.34.11
 VAULT_VERSION ?= 1.9.3
 
@@ -145,7 +146,7 @@ $(ENVTEST): $(LOCALBIN)
 KO = $(LOCALBIN)/ko
 ko: $(KO) ## Download ko locally if necessary.
 $(KO): $(LOCALBIN)
-	GOBIN=$(LOCALBIN) go install github.com/google/ko@latest
+	GOBIN=$(LOCALBIN) go install github.com/google/ko@$(KO_VERSION)
 
 # Generate helm chart
 .PHONY: helmchart

@@ -32,6 +32,8 @@ jobs:
 
       - name: Setup ko
         uses: ko-build/setup-ko@61b4d1d396f5b2e7d6bb6fefdce3dc38d1a13445 # v0.10
+        with:
+          version: v0.19.1
 
       - name: Log in to the GitHub Container registry
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
