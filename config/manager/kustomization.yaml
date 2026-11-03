@@ -12,5 +12,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - name: controller
-  newName: ghcr.io/redhat-cop/patch-operator
+  newName: ghcr.io/loafoe/patch-operator
   newTag: latest
