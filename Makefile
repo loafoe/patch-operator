@@ -181,8 +181,9 @@ HELM_TEST_IMG_TAG ?= helmchart-test
 # Deploy the helmchart to a kind cluster to test deployment.
 # If the test-metrics sidecar in the prometheus pod is ready, the metrics work and the test is successful.
 .PHONY: helmchart-test
-helmchart-test: kind-setup helmchart ko
-	KO_DOCKER_REPO=kind.local $(KO) build --bare --tags=${HELM_TEST_IMG_TAG} .
+helmchart-test: kind-setup helmchart ko kind
+	KO_DOCKER_REPO=ko.local $(KO) build --bare --tags=${HELM_TEST_IMG_TAG} .
+	$(KIND) load docker-image ko.local:${HELM_TEST_IMG_TAG}
 	$(HELM) repo add jetstack https://charts.jetstack.io
 	$(HELM) install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 --set installCRDs=true
 	$(HELM) repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -190,7 +191,7 @@ helmchart-test: kind-setup helmchart ko
 	$(HELM) install prometheus-rbac integration/helm/prometheus-rbac -n default
 	$(HELM) upgrade -i ${OPERATOR_NAME}-local charts/${OPERATOR_NAME} -n ${OPERATOR_NAME}-local --create-namespace \
 	  --set enableCertManager=true \
-	  --set image.repository=kind.local \
+	  --set image.repository=ko.local \
 	  --set image.tag=${HELM_TEST_IMG_TAG}
 	$(KUBECTL) wait --namespace ${OPERATOR_NAME}-local --for=condition=ready pod --selector=app.kubernetes.io/name=${OPERATOR_NAME} --timeout=90s
 	$(KUBECTL) wait --namespace default --for=condition=ready pod prometheus-kube-prometheus-stack-prometheus-0 --timeout=600s || { \
