@@ -40,16 +40,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push image under a staging tag
         id: ko-build
         env:
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         run: |
-          IMAGE=$(ko build --bare --platform=linux/amd64,linux/arm64 . --push --tags=${{ github.ref_name }})
-          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
+          IMAGE=$(ko build --bare --platform=linux/amd64,linux/arm64 . --push --tags="sha-${GITHUB_SHA}")
+          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
 
-      - name: Scan image before release promotion
+      - name: Scan image before release promotion (linux/amd64)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_PLATFORM: linux/amd64
+        with:
+          version: v0.76.1
+          image-ref: ${{ steps.ko-build.outputs.image }}
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          timeout: 10m
+
+      - name: Scan image before release promotion (linux/arm64)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_PLATFORM: linux/arm64
         with:
           version: v0.76.1
           image-ref: ${{ steps.ko-build.outputs.image }}
@@ -73,6 +88,12 @@ jobs:
         run: |
           cosign sign --yes ${{ steps.ko-build.outputs.image }}
           cosign attest --yes --type spdxjson --predicate ${{ runner.temp }}/sbom.spdx.json ${{ steps.ko-build.outputs.image }}
+
+      - name: Promote image to the release tag
+        env:
+          IMAGE: ${{ steps.ko-build.outputs.image }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: go run github.com/google/go-containerregistry/cmd/crane@v0.22.1 tag "${IMAGE}" "${RELEASE_TAG}"
 
   helm-release:
     name: helm-release
