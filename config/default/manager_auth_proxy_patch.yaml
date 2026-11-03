@@ -10,8 +10,6 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - name: kube-rbac-proxy
         image: quay.io/brancz/kube-rbac-proxy:v0.23.1
