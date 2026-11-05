@@ -45,6 +45,8 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: {{ .Values.kube_rbac_proxy.securityContext.runAsUser }}
+          runAsGroup: {{ .Values.kube_rbac_proxy.securityContext.runAsGroup }}
         ports:
         - containerPort: 8443
           name: https
@@ -64,6 +66,8 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: {{ .Values.securityContext.runAsUser }}
+          runAsGroup: {{ .Values.securityContext.runAsGroup }}
         volumeMounts:
         - name: webhook-server-cert
           readOnly: true

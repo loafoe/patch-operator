@@ -21,6 +21,10 @@ resources:
     cpu: 100m
     memory: 250Mi
 
+securityContext:
+  runAsUser: 90001
+  runAsGroup: 90001
+
 nodeSelector: {}
 
 tolerations: []
@@ -39,6 +43,9 @@ kube_rbac_proxy:
     requests:
       cpu: 5m
       memory: 64Mi
+  securityContext:
+    runAsUser: 90002
+    runAsGroup: 90002
 
 enableMonitoring: true
 enableCertManager: false

@@ -36,6 +36,8 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: 90001
+          runAsGroup: 90001
         livenessProbe:
           httpGet:
             path: /healthz
